@@ -1,0 +1,394 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>PV dan Baterai Monitoring System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <style>
+    body {
+      min-width: 310px;
+    	max-width: 800px;
+    	height: 400px;
+      margin: 0 auto;
+    }
+    h2 {
+      font-family: Arial;
+      font-size: 2.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>Photovoltaic Monitoring System</h2>
+  <div id="chart-PVVoltage" class="container"></div>
+  <div id="chart-PVCurrent" class="container"></div>
+  <div id="chart-PVPower" class="container"></div>
+  <div id="chart-BVoltage" class="container"></div>
+  <div id="chart-BCurrent" class="container"></div>
+  <div id="chart-BPower" class="container"></div>
+  <div id="chart-BPresentase" class="container"></div>
+  <div id="chart-DutyCycle" class="container"></div>
+  <div id="chart-Efisiensi" class="container"></div>
+</body>
+<script>
+var chartVPV = new Highcharts.Chart({
+  chart:{ renderTo : 'chart-PVVoltage' },
+  title: { text: 'TEGANGAN PANEL SURYA' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#059e8a' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Tegangan (Volt)' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartVPV.series[0].data.length > 40) {
+        chartVPV.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartVPV.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/TeganganPanel", true);
+  xhttp.send();
+}, 1000 ) ;
+
+var chartIPV = new Highcharts.Chart({
+  chart:{ renderTo : 'chart-PVCurrent' },
+  title: { text: 'ARUS PANEL SURYA' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#e7091b' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Arus (A)' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartIPV.series[0].data.length > 40) {
+        chartIPV.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartIPV.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/ArusPanel", true);
+  xhttp.send();
+}, 1000 ) ;
+
+var chartPPV = new Highcharts.Chart({
+  chart:{ renderTo:'chart-PVPower' },
+  title: { text: 'DAYA PANEL SURYA' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#18009c' }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Watt (W)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartPPV.series[0].data.length > 40) {
+        chartPPV.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartPPV.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/DayaPanel", true);
+  xhttp.send();
+}, 1000 ) ;
+
+var chartVB = new Highcharts.Chart({
+  chart:{ renderTo : 'chart-BVoltage' },
+  title: { text: 'TEGANGAN BATERAI' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#059e8a' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Tegangan (Volt)' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartVB.series[0].data.length > 40) {
+        chartVB.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartVB.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/TeganganBaterai", true);
+  xhttp.send();
+}, 1000 ) ;
+
+var chartIB = new Highcharts.Chart({
+  chart:{ renderTo : 'chart-BCurrent' },
+  title: { text: 'ARUS PENGISIAN BATERAI' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#e7091b' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Arus (A)' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartIB.series[0].data.length > 40) {
+        chartIB.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartIB.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/ArusBaterai", true);
+  xhttp.send();
+}, 1000 ) ;
+
+var chartPB = new Highcharts.Chart({
+  chart:{ renderTo:'chart-BPower' },
+  title: { text: 'DAYA PENGISIAN BATERAI' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#18009c' }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'Watt (W)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartPB.series[0].data.length > 40) {
+        chartPB.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartPB.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/DayaBaterai", true);
+  xhttp.send();
+}, 1000 ) ;
+
+var chartPre = new Highcharts.Chart({
+  chart:{ renderTo : 'chart-BPresentase' },
+  title: { text: 'PRESENTASE BATERAI' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#388d1f' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: '%' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartPre.series[0].data.length > 40) {
+        chartPre.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartPre.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/PresentaseBaterai", true);
+  xhttp.send();
+}, 1000 ) ;
+
+var chartDut = new Highcharts.Chart({
+  chart:{ renderTo : 'chart-DutyCycle' },
+  title: { text: 'DUTY CYCLE MPPT' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#83d3f3' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: '%' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartDut.series[0].data.length > 40) {
+        chartDut.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartDut.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/DutyMPPT", true);
+  xhttp.send();
+}, 1000 ) ;
+
+var chartEff = new Highcharts.Chart({
+  chart:{ renderTo : 'chart-Efisiensi' },
+  title: { text: 'EFISIENSI MPPT' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#83d3f3' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: '%' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartEff.series[0].data.length > 40) {
+        chartEff.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartEff.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/EfisiensiMPPT", true);
+  xhttp.send();
+}, 1000 ) ;
+</script>
+</html>
